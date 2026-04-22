@@ -1,0 +1,36 @@
+Metadata-Version: 2.4
+Name: dataflow-agent
+Version: 0.1.0
+Summary: Intelligent data governance and automated cleaning engine based on multi-agent collaboration
+Requires-Python: >=3.11
+Requires-Dist: langgraph>=0.2.0
+Requires-Dist: langchain-core>=0.3.0
+Requires-Dist: langchain-openai>=0.2.0
+Requires-Dist: pydantic>=2.7.0
+Requires-Dist: pydantic-settings>=2.3.0
+Requires-Dist: fastapi>=0.111.0
+Requires-Dist: uvicorn[standard]>=0.29.0
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: celery[redis]>=5.3.0
+Requires-Dist: redis>=5.0.0
+Requires-Dist: polars>=0.20.31
+Requires-Dist: pandas>=2.2.2
+Requires-Dist: pyarrow>=15.0.0
+Requires-Dist: splink>=3.9.7
+Requires-Dist: sentence-transformers>=3.0.0
+Requires-Dist: faiss-cpu>=1.8.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: python-multipart>=0.0.9
+Requires-Dist: docker>=7.0.0
+Requires-Dist: opentelemetry-sdk>=1.24.0
+Requires-Dist: opentelemetry-instrumentation-fastapi>=0.45b0
+Requires-Dist: opentelemetry-exporter-otlp-proto-grpc>=1.24.0
+Requires-Dist: prometheus-client>=0.20.0
+Requires-Dist: structlog>=24.1.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.0; extra == "dev"
+Requires-Dist: pytest-cov>=5.0.0; extra == "dev"
+Requires-Dist: ruff>=0.4.0; extra == "dev"
+Requires-Dist: mypy>=1.10.0; extra == "dev"

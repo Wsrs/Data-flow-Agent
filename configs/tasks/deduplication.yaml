@@ -1,0 +1,40 @@
+task: deduplication
+version: 1
+description: >
+  识别并消除数据集中的重复行。支持精确匹配（key 字段完全一致）与模糊匹配
+  （字符串相似度超过阈值）两种模式。默认由 LLM 自动推断去重关键字段。
+
+data_source:
+  type: parquet
+  sample_size: 500
+
+cleaning_strategy:
+  type: deduplication
+  mode: fuzzy            # exact | fuzzy
+  key_fields: []         # 空列表 = LLM 自动推断
+  fuzzy_threshold: 0.90
+
+circuit_breaker:
+  max_row_reduction: 0.30
+  min_confidence_score: 0.75
+
+metric_list:
+  - metric: uniqueness_rate
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.50
+  - metric: row_retention_rate
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.30
+  - metric: script_first_pass_rate
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.20
+
+output:
+  format: parquet
+  write_audit_log: true
+  write_flagged_records: true
+
+max_retries: 3

@@ -1,0 +1,39 @@
+task: missing_value_imputation
+version: 1
+description: >
+  对缺失字段进行统计或语义插补。低置信度结果自动打 "__flagged__" 标签，
+  避免模型幻觉污染生产数据。
+
+data_source:
+  type: parquet
+  sample_size: 500
+
+cleaning_strategy:
+  type: missing_value_imputation
+  strategy_map: {}               # 空 = LLM 自动为每列推荐策略
+  # strategy_map 示例:
+  # age: median
+  # city: mode
+  # description: llm_generate   # 仅对低缺失率字段使用 LLM
+  max_llm_imputation_rate: 0.05  # LLM 插补字段缺失率上限
+
+circuit_breaker:
+  max_row_reduction: 0.01
+  min_confidence_score: 0.65
+
+metric_list:
+  - metric: completeness_rate
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.70
+  - metric: imputation_confidence_score
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.30
+
+output:
+  format: parquet
+  write_audit_log: true
+  write_flagged_records: true
+
+max_retries: 3

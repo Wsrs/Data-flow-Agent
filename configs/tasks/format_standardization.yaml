@@ -1,0 +1,42 @@
+task: format_standardization
+version: 1
+description: >
+  将日期、电话、邮编、货币等字段统一转换为目标格式规范。
+  支持自动推断字段格式与手动指定 field_rules 两种模式。
+
+data_source:
+  type: csv
+  sample_size: 500
+  encoding: utf-8
+
+cleaning_strategy:
+  type: format_standardization
+  target_locale: zh_CN
+  field_rules: []     # 空列表 = LLM 自动推断格式规则
+  # 手动指定示例:
+  # field_rules:
+  #   - field: order_date
+  #     target_format: "%Y-%m-%d"
+  #   - field: phone
+  #     target_format: "+86-{area}-{number}"
+
+circuit_breaker:
+  max_row_reduction: 0.02   # 格式化不应删行
+  min_confidence_score: 0.70
+
+metric_list:
+  - metric: format_compliance_rate
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.60
+  - metric: null_rate_delta
+    aggregation: mean
+    higher_is_better: false   # null 不应增加
+    weight: 0.40
+
+output:
+  format: parquet
+  write_audit_log: true
+  write_flagged_records: true
+
+max_retries: 3

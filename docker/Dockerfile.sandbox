@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+# Only data-processing libs – NO network, shell, or system tools
+RUN pip install --no-cache-dir \
+    polars==0.20.31 \
+    pandas==2.2.2 \
+    pyarrow==15.0.0 \
+    splink==3.9.7
+
+# Create an unprivileged user
+RUN useradd -m -s /bin/false sandbox_user
+USER sandbox_user
+
+WORKDIR /workspace
+
+# Scripts are passed as a file, not stdin, to support longer payloads
+ENTRYPOINT ["python"]

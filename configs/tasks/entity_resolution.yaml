@@ -1,0 +1,52 @@
+task: entity_resolution
+version: 1
+description: >
+  跨记录识别同一现实实体（如公司名称变体、地址写法差异），
+  输出标准化 canonical_id 列。采用向量检索 + Splink 概率匹配 + LLM 终审三层架构。
+
+data_source:
+  type: parquet
+  sample_size: 300
+
+cleaning_strategy:
+  type: entity_resolution
+  algorithm: hybrid          # splink | vector | hybrid
+  match_fields:
+    - name: company_name
+      weight: 0.60
+      comparator: jaro_winkler
+    - name: address
+      weight: 0.30
+      comparator: levenshtein
+    - name: phone
+      weight: 0.10
+      comparator: exact
+  splink_threshold: 0.85
+  vector_model: BAAI/bge-m3
+  vector_top_k: 20
+  llm_arbitration: true     # 临界案例 [0.75, 0.85) 由 LLM 终审
+
+circuit_breaker:
+  max_row_reduction: 0.10   # 实体消歧不应大量删行
+  min_confidence_score: 0.80
+
+metric_list:
+  - metric: pair_f1
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.50
+  - metric: precision
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.25
+  - metric: recall
+    aggregation: mean
+    higher_is_better: true
+    weight: 0.25
+
+output:
+  format: parquet
+  write_audit_log: true
+  write_flagged_records: true
+
+max_retries: 2

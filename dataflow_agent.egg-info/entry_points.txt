@@ -1,0 +1,3 @@
+[console_scripts]
+dataflow-eval = scripts.evaluate:cli
+dataflow-run = scripts.run_job:cli
