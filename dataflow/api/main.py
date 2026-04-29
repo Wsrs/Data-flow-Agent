@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -17,6 +18,14 @@ from dataflow.observability.logger import get_logger  # noqa: E402
 logger = get_logger(__name__)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    from dataflow.tasks.registry import TaskRegistry
+    registry = TaskRegistry.get()
+    logger.info("app_started", registered_tasks=registry.list_tasks())
+    yield
+
+
 def create_app() -> FastAPI:
     app = FastAPI(
         title="DataFlow-Agent API",
@@ -24,6 +33,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
         docs_url="/docs",
         redoc_url="/redoc",
+        lifespan=lifespan,
     )
 
     app.add_middleware(
@@ -48,12 +58,6 @@ def create_app() -> FastAPI:
     @app.get("/health", tags=["health"])
     async def health():
         return {"status": "ok", "service": "dataflow-agent"}
-
-    @app.on_event("startup")
-    async def on_startup():
-        from dataflow.tasks.registry import TaskRegistry
-        registry = TaskRegistry.get()
-        logger.info("app_started", registered_tasks=registry.list_tasks())
 
     return app
 

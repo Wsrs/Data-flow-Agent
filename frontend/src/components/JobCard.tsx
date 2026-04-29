@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { Activity, CheckCircle, AlertTriangle, XCircle, Clock, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { Card, Badge, Button, Spinner } from './ui'
-import { getJob, approveJob, abortJob, type Job } from '../lib/api'
+import { getJob, getAuditLog, approveJob, abortJob, type Job } from '../lib/api'
 import { statusBadge, formatDate } from '../lib/utils'
 
 interface JobCardProps {
@@ -21,7 +21,7 @@ export function JobCard({ job, onUpdated }: JobCardProps) {
     if (auditLog.length > 0) { setExpanded(v => !v); return }
     setLoadingAudit(true)
     try {
-      const { data } = await import('../lib/api').then(m => m.getAuditLog(job.job_id))
+      const { data } = await getAuditLog(job.job_id)
       setAuditLog(data as any[])
     } catch { /* no-op */ } finally {
       setLoadingAudit(false)

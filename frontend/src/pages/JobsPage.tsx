@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Plus, Inbox, RefreshCw } from 'lucide-react'
 import { Card, SectionHeader, Button, Input, Select, EmptyState, Spinner } from '../components/ui'
 import { JobCard } from '../components/JobCard'
-import { createJob, listTasks, type Job, type TaskSummary } from '../lib/api'
+import { createJob, getJob, listTasks, type Job, type TaskSummary } from '../lib/api'
 
 // Simple in-memory job list (persisted in state)
 type JobMeta = Pick<Job, 'job_id' | 'task_name' | 'status' | 'created_at' | 'progress_summary' | 'retry_count' |
@@ -33,7 +33,6 @@ export default function JobsPage() {
     setLoading(true)
     const runningIds = jobs.filter(j => ['profiling', 'engineering', 'qa', 'pending'].includes(j.status)).map(j => j.job_id)
     if (runningIds.length === 0) { setLoading(false); return }
-    const { getJob } = await import('../lib/api')
     const updated = await Promise.all(runningIds.map(id => getJob(id).then(r => r.data).catch(() => null)))
     setJobs(prev => prev.map(j => {
       const u = updated.find(x => x?.job_id === j.job_id)

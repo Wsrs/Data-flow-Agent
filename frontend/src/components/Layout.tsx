@@ -1,13 +1,14 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Layers, Cpu, BarChart2, Brain, Zap } from 'lucide-react'
+import { Layers, Cpu, BarChart2, Brain, Zap, Settings } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { getLLMStatus, type LLMStatus } from '../lib/api'
 
 const nav = [
-  { to: '/jobs',   label: 'Jobs',       icon: Layers   },
-  { to: '/eval',   label: 'Evaluation', icon: BarChart2 },
-  { to: '/memory', label: 'Memory',     icon: Brain    },
+  { to: '/jobs',     label: 'Jobs',       icon: Layers   },
+  { to: '/eval',     label: 'Evaluation', icon: BarChart2 },
+  { to: '/memory',   label: 'Memory',     icon: Brain    },
+  { to: '/settings', label: 'Settings',   icon: Settings },
 ]
 
 function LLMChip() {
