@@ -40,3 +40,8 @@ reports/
 
 # Docker volumes
 redis_data/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/

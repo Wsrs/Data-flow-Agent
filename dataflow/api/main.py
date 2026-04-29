@@ -11,6 +11,7 @@ from prometheus_client import make_asgi_app
 load_dotenv()
 
 from dataflow.api.routers import jobs, tasks, evaluation  # noqa: E402
+from dataflow.api.routers import memory  # noqa: E402
 from dataflow.observability.logger import get_logger  # noqa: E402
 
 logger = get_logger(__name__)
@@ -36,6 +37,7 @@ def create_app() -> FastAPI:
     app.include_router(jobs.router)
     app.include_router(tasks.router)
     app.include_router(evaluation.router)
+    app.include_router(memory.router, prefix="/api/v1")
 
     # ── Prometheus metrics endpoint ───────────────────────────────────────────
     metrics_app = make_asgi_app()
