@@ -94,3 +94,15 @@ export const searchMemory  = (q: string)        => api.get<MemoryEntry[]>('/memo
 export const listTemplates = (task?: string)    => api.get<TemplateEntry[]>('/memory/templates', { params: { task } })
 export const applyTemplate = (id: string)       => api.get<TemplateEntry>(`/memory/templates/${id}`)
 export const deleteMemory  = (id: string)       => api.delete(`/memory/${id}`)
+
+// ── LLM ──────────────────────────────────────────────────────────────────────
+
+export interface LLMStatus {
+  provider: string
+  model: string
+  base_url: string
+  reachable: boolean
+  available_models: string[]
+}
+
+export const getLLMStatus = () => api.get<LLMStatus>('/llm/status')

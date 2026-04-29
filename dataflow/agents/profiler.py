@@ -7,25 +7,18 @@ from pathlib import Path
 from uuid import uuid4
 
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
-
+from dataflow.agents.llm_factory import build_llm
 from dataflow.schemas.report import ColumnProfile, DataQualityReport
 
 
 class ProfilerAgent:
     def __init__(
         self,
-        model: str = "gpt-4o",
+        model: str | None = None,
         base_url: str | None = None,
         api_key: str | None = None,
     ) -> None:
-        self._llm = ChatOpenAI(
-            model=model,
-            base_url=base_url,
-            api_key=api_key,
-            temperature=0,
-            timeout=120,
-        )
+        self._llm = build_llm(model=model, base_url=base_url, api_key=api_key, timeout=120)
 
     async def run(self, data_path: str, sample_size: int = 500) -> DataQualityReport:
         import polars as pl

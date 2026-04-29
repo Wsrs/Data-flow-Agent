@@ -5,8 +5,7 @@ import ast
 from pathlib import Path
 
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
-
+from dataflow.agents.llm_factory import build_llm
 from dataflow.schemas.execution import CleaningScript, ExecutionResult
 from dataflow.schemas.task_config import TaskConfig
 
@@ -46,11 +45,10 @@ class QAAgent:
         self._circuit = CircuitBreaker()
 
         llm_model = model or task_config.llm_model
-        self._llm = ChatOpenAI(
+        self._llm = build_llm(
             model=llm_model,
             base_url=base_url,
             api_key=api_key,
-            temperature=0,
             timeout=60,
         )
 
